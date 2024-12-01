@@ -1,0 +1,57 @@
+{% extends 'maintenance/base.html' %}
+{% load static %}
+
+{% block title %}SolarGuard: Predictive Maintenance for Solar Panels{% endblock %}
+
+{% block content %}
+<!-- Banner Section -->
+<div class="row">
+    <div class="col-md-12" style="background: url('{% static "images/solarguy.jpg" %}') no-repeat center center; background-size: cover; padding: 100px 0;">
+        <div class="text-center text-white" style="background-color: rgba(0, 0, 0, 0.5); padding: 20px;">
+            <h1 class="display-3">SolarGuard</h1>
+            <h2 class="display-6">LSTM Models for Maintenance Optimization</h2>
+        </div>
+    </div>
+</div>
+
+<!-- Content Section -->
+<div class="row mt-5 align-items-center">
+    <!-- Project Overview and About the Model (Left) -->
+    <div class="col-md-8 px-4">
+        <div class="mb-5">
+            <h3 class="mb-4 text-center">Project Overview</h3>
+            <p style="line-height: 1.8;">
+                SolarGuard is an advanced system designed to predict DC generation in solar panels using machine learning techniques, specifically Long Short-Term Memory (LSTM) models. By analyzing historical and real-time solar irradiation data, this system can forecast DC generation and identify underperformance issues, allowing for proactive maintenance.
+            </p>
+            <p style="line-height: 1.8;">
+                The goal of SolarGuard is to ensure that solar panels operate efficiently by detecting discrepancies between predicted and actual DC output, allowing for targeted maintenance actions before system failures occur.
+            </p>
+        </div>
+        <div>
+            <h3 class="mb-4 text-center">About the LSTM Model</h3>
+            <p style="line-height: 1.8;">
+                The LSTM model (Long Short-Term Memory) is a type of recurrent neural network (RNN) designed for time-series prediction. In SolarGuard, the LSTM processes incoming irradiation data to predict the expected DC generation over time.
+            </p>
+            <p style="line-height: 1.8;">
+                By learning from patterns in historical data, the LSTM model forecasts the future behavior of DC generation. Any significant deviations from the predicted values are flagged for maintenance, optimizing the performance and longevity of solar panels.
+            </p>
+        </div>
+    </div>
+
+    <!-- LSTM Model Diagram (Right) -->
+    <div class="col-md-4 text-center">
+        <img src="{% static 'images/lstm_model.png' %}" alt="LSTM Model Diagram" class="img-fluid mt-3" style="max-width: 100%; padding-left: 20px;">
+    </div>
+</div>
+
+<!-- Disclaimer Section -->
+<div class="row mt-5">
+    <div class="col-md-12 text-center">
+        <div class="d-flex justify-content-center align-items-center mb-2">
+            <p class="fw-bold me-3 mb-0">Project Team: Jonathan Chartrand & Robert Boutette (4th Year CE Students)</p>
+            <img src="{% static 'images/dallogo.png' %}" alt="Dalhousie University Logo" class="img-fluid" style="max-width: 100px;">
+        </div>
+    </div>
+</div>
+
+{% endblock %}

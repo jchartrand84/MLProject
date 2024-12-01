@@ -1,0 +1,199 @@
+/* General Reset & Body Styling */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+body {
+    background: linear-gradient(to bottom, #f8f9fa, #a4b6c8);
+    font-family: Arial, sans-serif;
+    color: #212529;
+    margin: 0;
+}
+
+/* Card Styling */
+.card {
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    background: #f9f9f9; /* Light background for all cards */
+}
+
+.card:hover {
+    transform: scale(1.05);
+    box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+.card-header {
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 1rem;
+    padding: 0.75rem 1rem;
+    color: #333333;
+    text-align: left;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+/* Environmental Sensors */
+.bg-teal {
+    background-color: #c0bed0;  /* Teal background for environmental cards */
+    color: #1f272f;  /* White text */
+}
+
+.bg-teal .card-header {
+    background-color: #668dc3;  /* Darker teal header */
+    color: #03263c;  /* White text */
+}
+
+.bg-teal .card-body {
+    color: #333f4a;  /* Light text color for better readability */
+}
+
+/* PV Panel Generation */
+.lighter-gray {
+    background-color: rgba(209, 209, 209, 0.87); /* Lighter gray background for PV panel cards */
+    color: #a4b6c8;  /* Dark text */
+}
+
+.lighter-gray .card-header {
+    background-color: #626d8f;  /* Soft gray header */
+    color: #191818;  /* Dark text */
+}
+
+.lighter-gray .card-body {
+    background-color: rgba(209, 209, 209, 0.87);  /* Soft gray body */
+    color: #3e4043;  /* Darker gray text */
+}
+
+/* Conditional Background Colors Based on % Difference */
+.bg-danger {
+    background-color: #f8d7da !important;  /* Soft red background for high difference */
+    color: #721c24;  /* Dark text for contrast */
+}
+
+.bg-warning {
+    background-color: #fff3cd !important;  /* Soft yellow background for moderate difference */
+    color: #856404;  /* Dark yellow text for contrast */
+}
+
+/* Styling for the section headers */
+.header-bar {
+    background-color: rgba(0, 0, 0, 0.1); /* Transparent header bar with light background */
+    padding: 10px 0;  /* Adjusted padding */
+    border: 2px solid black;  /* Black border for the header bar */
+    color: #333;  /* Dark text for contrast */
+    border-radius: 0; /* Ensure no rounding for header */
+    margin-bottom: -1px; /* Remove margin between the header and table */
+}
+
+/* Table Styling */
+.table-responsive {
+    margin-bottom: 30px;  /* Add space below tables */
+}
+
+.table {
+    border: 1px solid black;  /* Black border around the table */
+    margin-top: 0;  /* Remove extra margin between table and header */
+    background-color: #fff;  /* Ensure table background is white */
+    box-shadow: none;  /* Remove shadow */
+}
+
+/* Table Headers */
+th {
+    text-align: center;  /* Center-align headers */
+    background-color: #f2f2f2;  /* Light background for table headers */
+    color: #333;  /* Darker text color for contrast */
+    padding: 12px;  /* Add padding to table headers */
+    font-size: 1.1rem;
+    font-weight: bold;
+    border: 1px solid black;  /* Black border around table headers */
+}
+
+th, td {
+    vertical-align: middle;  /* Vertically center text in cells */
+}
+
+td {
+    text-align: center;  /* Center-align table data */
+    padding: 12px;  /* Add padding to table data cells */
+    color: #555;  /* Lighter text for readability */
+    border: 1px solid black;  /* Black border around table data */
+}
+
+/* Table Row Hover */
+tr:hover {
+    background-color: #f8f9fa;  /* Light background on hover */
+    cursor: pointer;  /* Change cursor to indicate interactiveness */
+}
+
+.mb-4 {
+    margin-bottom: 1.5rem;  /* Add spacing between sections */
+}
+
+/* Specific styling for the Warning Panels table */
+.header-bar-warning {
+    background-color: #fff3cd; /* Soft yellow for the warning table */
+    border-color: #ffeeba; /* Slightly darker yellow border */
+}
+
+/* Specific styling for the Suspected Panel Faults table */
+.header-bar-fault {
+    background-color: #f8d7da; /* Soft red for the fault table */
+    border-color: #f5c6cb; /* Slightly darker red border */
+}
+
+/* Control Panel Cards Specific Style */
+.control-card {
+    border: none;
+    border-radius: 0; /* No rounded corners */
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    background: #f9f9f9; /* Light background for all cards */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.control-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+.control-card .card-header {
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 1rem;
+    padding: 0.5rem;
+    color: #ffffff; /* White text */
+    text-align: center;
+    background-color: #053455; /* Blue header for Control Panel cards */
+}
+
+.control-card .card-body {
+    font-size: 0.85rem;
+    color: #333333;
+    padding: 0.5rem;
+}
+
+.control-card .card-footer {
+    background: #f9f9f9; /* Match the body background */
+    border: none;
+    padding: 0.5rem;
+}
+
+.control-card .btn {
+    font-size: 0.85rem;
+    padding: 0.3rem 0.8rem;
+    background-color: #03263c; /* Button background color (blue) */
+    color: #ffffff; /* Button text color (white) */
+    border: none; /* Remove border */
+    border-radius: 5px; /* Optional: slight rounding for the button itself */
+    transition: background-color 0.3s ease; /* Smooth color transition on hover */
+}
+
+.control-card .btn:hover {
+    background-color: #323e48; /* Darker blue for hover state */
+    color: #ffffff; /* Keep the text white on hover */
+}
+
+

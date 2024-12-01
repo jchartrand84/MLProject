@@ -1,0 +1,118 @@
+{% extends 'maintenance/base.html' %}
+{% load static %}
+
+{% block title %}Control Panel{% endblock %}
+
+{% block content %}
+<!-- Banner Section -->
+<div class="row">
+    <div class="col-md-12" style="background: url('{% static "images/solarguy.jpg" %}') no-repeat center center; background-size: cover; padding: 50px 0;">
+        <div class="text-center text-white" style="background-color: rgba(0, 0, 0, 0.5); padding: 10px;">
+            <h1 class="display-4">Control Panel</h1>
+        </div>
+    </div>
+</div>
+
+<!-- Control Panel Cards Section -->
+<div class="container mt-4">
+    <div class="row">
+        {% for panel in panel_status %}
+            <div class="col-lg-2 col-md-3 col-sm-4 col-6 mb-3">
+                <div class="control-card text-center">
+                    <div class="card-header text-uppercase">
+                        Inverter {{ panel.panel }}
+                    </div>
+                    <div class="card-body p-2">
+                        <p class="mb-1">
+                            <small><strong>Status:</strong>
+                                <span class="{% if panel.status == 'FAULT' %}text-danger
+                                               {% elif panel.status == 'WARNING' %}text-warning
+                                               {% else %}text-success{% endif %}">
+                                    {{ panel.status }}
+                                </span>
+                            </small>
+                        </p>
+                        <p class="mb-1">
+                            <small><strong>Degradation:</strong>
+                                {{ panel.degradation }}%
+                            </small>
+                        </p>
+                        <p class="mb-1">
+                            <small><strong>Fault Count:</strong>
+                                {{ panel.fault_count }}
+                            </small>
+                        </p>
+                    </div>
+                    <div class="card-footer p-2">
+                        <button class="btn btn-sm btn-primary view-panel-btn" data-panel="{{ panel.panel }}">View</button>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <!-- Panel Data Display Section -->
+    <div id="panel-data-section" class="mt-5">
+        <h3 class="text-center" id="panel-data-header">Select an Inverter to View Details</h3>
+        <div class="table-responsive">
+            <table class="table table-striped" id="panel-data-table">
+                <thead>
+                    <tr>
+                        <th>Timestamp</th>
+                        <th>Ambient Temp (°C)</th>
+                        <th>Module Temp (°C)</th>
+                        <th>Irradiation (kW/m²)</th>
+                        <th>Measured DC (kW)</th>
+                        <th>Predicted DC (kW)</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Fetch panel data and display it dynamically
+    document.querySelectorAll('.view-panel-btn').forEach(button => {
+        button.addEventListener('click', function () {
+            const panel = this.getAttribute('data-panel');
+
+            fetch("{% url 'get_panel_data' %}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify({ panel: panel })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Update the header dynamically
+                    document.getElementById('panel-data-header').textContent = `Inverter ${panel} Details`;
+
+                    // Populate the table with panel data
+                    const tbody = document.getElementById('panel-data-table').querySelector('tbody');
+                    tbody.innerHTML = ''; // Clear existing rows
+                    data.data.forEach(row => {
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
+                            <td>${row.timestamp}</td>
+                            <td>${row.ambient_temp.toFixed(3)}</td>
+                            <td>${row.module_temp.toFixed(3)}</td>
+                            <td>${row.irradiation.toFixed(3)}</td>
+                            <td>${row.measured_dc.toFixed(3)}</td>
+                            <td>${row.predicted_dc.toFixed(3)}</td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+                } else {
+                    alert('Error fetching panel data: ' + data.error);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    });
+</script>
+{% endblock %}

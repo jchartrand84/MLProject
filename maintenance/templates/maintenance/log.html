@@ -1,0 +1,142 @@
+{% extends 'maintenance/base.html' %}
+{% load static %}
+
+{% block title %}Maintenance Log{% endblock %}
+
+{% block content %}
+<!-- Banner Section -->
+<div class="row">
+    <div class="col-md-12" style="background: url('{% static "images/solarguy.jpg" %}') no-repeat center center; background-size: cover; padding: 100px 0;">
+        <div class="text-center text-white" style="background-color: rgba(0, 0, 0, 0.5); padding: 20px;">
+            <h1 class="display-3">Maintenance Log</h1>
+        </div>
+    </div>
+</div>
+
+<!-- Table Section: Panel Warnings & Faults -->
+<div class="container mt-4">
+
+    <!-- Display the Warning Panels Table -->
+    {% if warning_log_data %}
+        <div class="header-bar header-bar-warning mb-0">
+            <h3 class="text-center mb-0">Inverter Warnings</h3>
+        </div>
+        <div class="table-responsive pt-0">
+            <table class="table table-striped log-table">
+                <thead>
+                    <tr>
+                        <th>Timestamp</th>
+                        <th>Ambient Temp (°C)</th>
+                        <th>Module Temp (°C)</th>
+                        <th>Irradiation (kW/m²)</th>
+                        <th>Panel #</th>
+                        <th>Measured DC (kW)</th>
+                        <th>Predicted DC (kW)</th>
+                        <th>Percentage Difference (%)</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for warning in warning_log_data %}
+                    <tr>
+                        <td>{{ warning.timestamp }}</td>
+                        <td>{{ warning.ambient_temp|floatformat:3 }}</td>
+                        <td>{{ warning.module_temp|floatformat:3 }}</td>
+                        <td>{{ warning.irradiation|floatformat:3 }}</td>
+                        <td>{{ warning.panel }}</td>
+                        <td>{{ warning.measured_dc|floatformat:3 }}</td>
+                        <td>{{ warning.predicted_dc|floatformat:3 }}</td>
+                        <td>{{ warning.pdiff|floatformat:3 }}%</td>
+                        <td>
+                            <button class="btn btn-primary ack-button"
+                                    data-timestamp="{{ warning.timestamp }}"
+                                    data-panel="{{ warning.panel }}">
+                                Ack
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <p class="text-center">No warnings to display.</p>
+    {% endif %}
+
+    <!-- Display the Faulted Panels Table -->
+    {% if faulted_log_data %}
+        <div class="header-bar header-bar-fault mb-0">
+            <h3 class="text-center mb-0">Suspected Inverter Faults</h3>
+        </div>
+        <div class="table-responsive pt-0">
+            <table class="table table-striped log-table">
+                <thead>
+                    <tr>
+                        <th>Timestamp</th>
+                        <th>Ambient Temp (°C)</th>
+                        <th>Module Temp (°C)</th>
+                        <th>Irradiation (kW/m²)</th>
+                        <th>Panel #</th>
+                        <th>Measured DC (kW)</th>
+                        <th>Predicted DC (kW)</th>
+                        <th>Percentage Difference (%)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for fault in faulted_log_data %}
+                    <tr>
+                        <td>{{ fault.timestamp }}</td>
+                        <td>{{ fault.ambient_temp|floatformat:3 }}</td>
+                        <td>{{ fault.module_temp|floatformat:3 }}</td>
+                        <td>{{ fault.irradiation|floatformat:3 }}</td>
+                        <td>{{ fault.panel }}</td>
+                        <td>{{ fault.measured_dc|floatformat:3 }}</td>
+                        <td>{{ fault.predicted_dc|floatformat:3 }}</td>
+                        <td>{{ fault.pdiff|floatformat:3 }}%</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <p class="text-center">No faulted panels to display.</p>
+    {% endif %}
+</div>
+
+<script>
+    // Attach event listeners to all "Ack" buttons
+    document.addEventListener("DOMContentLoaded", function() {
+        const ackButtons = document.querySelectorAll(".ack-button");
+        ackButtons.forEach(button => {
+            button.addEventListener("click", function() {
+                const timestamp = this.dataset.timestamp;
+                const panel = this.dataset.panel;
+
+                fetch("{% url 'acknowledge_warning' %}", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRFToken": "{{ csrf_token }}"
+                    },
+                    body: JSON.stringify({ timestamp, panel })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Remove the acknowledged row from the table
+                        this.closest("tr").remove();
+                    } else {
+                        console.error("Failed to acknowledge warning:", data.error);
+                        alert("Failed to acknowledge warning.");
+                    }
+                })
+                .catch(error => {
+                    console.error("Error acknowledging warning:", error);
+                    alert("An error occurred while acknowledging the warning.");
+                });
+            });
+        });
+    });
+</script>
+
+{% endblock %}

@@ -1,0 +1,118 @@
+{% extends 'maintenance/base.html' %}
+{% load static %}
+{% block title %}Live Sensor Data{% endblock %}
+
+{% block content %}
+<!-- Banner Section -->
+<div class="row">
+    <div class="col-md-12" style="background: url('{% static "images/solarguy.jpg" %}') no-repeat center center; background-size: cover; padding: 100px 0;">
+        <div class="text-center text-white" style="background-color: rgba(0, 0, 0, 0.5); padding: 20px;">
+            <h1 class="display-3">Live Sensor Data</h1>
+        </div>
+    </div>
+</div>
+
+<!-- Live Sensor Data Section -->
+<div class="container mt-5">
+    <!-- Environmental Sensors -->
+    <h2 class="section-header" style="text-align: center;">Environmental Sensors</h2>
+    <div class="row" id="environmental-cards">
+        <!-- Dynamic environmental sensor cards will be inserted here -->
+    </div>
+
+    <!-- PV Panel Generation -->
+    <h2 class="section-header" style="text-align: center;">Inverter Generation</h2>
+    <div class="row" id="pv-panel-cards">
+        <!-- Dynamic PV panel cards will be inserted here -->
+    </div>
+</div>
+
+<script>
+    // Utility function to round numbers to 3 decimal places
+    function roundToThree(num) {
+        return Math.round((num + Number.EPSILON) * 1000) / 1000;
+    }
+
+    // Function to determine the background color based on % difference
+    function getCardBackgroundColor(percentageDifference) {
+        if (percentageDifference > 10) {
+            return 'bg-danger';  // soft red
+        } else if (percentageDifference > 5) {
+            return 'bg-warning';  // soft yellow
+        } else {
+            return '';  // default color
+        }
+    }
+
+    // Fetch live sensor data and update the page
+    function fetchSensorData() {
+        fetch("{% url 'get_sensor_data' %}")
+            .then(response => response.json())
+            .then(data => {
+                // Environmental Sensors
+                const environmentalKeys = ['ambient_temp', 'module_temp', 'irradiation'];
+                const environmentalUnits = {
+                    ambient_temp: '°C',
+                    module_temp: '°C',
+                    irradiation: 'kW/m²'
+                };
+                const environmentalCards = environmentalKeys.map(key => `
+                    <div class="col-lg-4 col-md-6 col-sm-12 mb-4">
+                        <div class="card bg-teal hover-card">
+                            <div class="card-header" style="text-align: center;">
+                                ${key.replace('_', ' ').toUpperCase()} (${environmentalUnits[key]})
+                            </div>
+                            <div class="card-body">
+                                <h4 style="text-align: center;">
+                                    ${data[key] ? roundToThree(data[key]) : 'Loading...'}
+                                </h4>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+                document.getElementById('environmental-cards').innerHTML = environmentalCards;
+
+                // PV Panel Generation
+                const pvPanelKeys = Object.keys(data).filter(key => key.startsWith('measured_dc'));
+                const pvPanelCards = pvPanelKeys.map((key, index) => {
+                    const predictedKey = `predicted_dc${index + 1}`;  // Get corresponding predicted_dc field
+                    const measuredDC = data[key];
+                    const predictedDC = data[predictedKey];
+                    const percentageDifference = measuredDC && predictedDC
+                        ? Math.abs((predictedDC - measuredDC) / measuredDC * 100)
+                        : 0;
+                    const cardColorClass = getCardBackgroundColor(percentageDifference);
+
+                    return `
+                        <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                            <div class="card lighter-gray hover-card">
+                                <div class="card-header" style="text-align: center; font-weight: bold;">
+                                    Inverter ${index + 1}
+                                </div>
+                                <div class="card-body ${cardColorClass}" style="text-align: left;">
+                                    <p><strong>Measured DC (kW):</strong>
+                                        ${measuredDC ? roundToThree(measuredDC) : 'Loading...'}
+                                    </p>
+                                    <p><strong>Predicted DC (kW):</strong>
+                                        ${predictedDC ? roundToThree(predictedDC) : 'Loading...'}
+                                    </p>
+                                    <p><strong>Percentage Difference (%):</strong>
+                                        ${percentageDifference ? roundToThree(percentageDifference) + '%' : 'Loading...'}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+                document.getElementById('pv-panel-cards').innerHTML = pvPanelCards;
+
+            })
+            .catch(error => console.error('Error fetching sensor data:', error));
+    }
+
+    // Refresh data every 5 seconds
+    setInterval(fetchSensorData, 5000);
+    fetchSensorData();
+</script>
+
+{% endblock %}
