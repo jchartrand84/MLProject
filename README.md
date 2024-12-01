@@ -58,8 +58,8 @@ The web application, built with Django, provides an interactive interface for mo
 ### Steps:
 1. Clone the repository:
    ```bash
-   git clone https://github.com/<your-repo>/solarguard.git
-   cd solarguard
+   git clone https://github.com/jchartrand84/MLProject.git
+   cd MLProject
    ```
 
 2. Install dependencies:
