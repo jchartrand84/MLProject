@@ -64,7 +64,7 @@ data_lock = threading.Lock()
 scaler_X = MinMaxScaler().fit([[20.4, 18.14, 0.0], [35.25, 65.55, 1.22]])  # Feature scaler
 scaler_y = MinMaxScaler().fit([[0], [14471.13]])  # Target scaler
 # Load pre-trained LSTM models for each solar panel
-models = {f'panel{i}': load_model(os.path.join(models_dir, f'panel{i}_lstm_model.h5')) for i in range(1, 23)}
+models = {f'inverter{i}': load_model(os.path.join(models_dir, f'inverter{i}_lstm_model.h5')) for i in range(1, 23)}
 
 # --- SIMULATE LIVE SENSOR DATA ---
 def simulate_csv_data():
@@ -109,7 +109,7 @@ def simulate_csv_data():
 
                     # Loop through all panels to predict DC values
                     for i in range(1, 23):
-                        model = models[f'panel{i}']
+                        model = models[f'inverter{i}']
                         try:
                             # Prepare input for the LSTM model
                             input_sequence = np.array([weather_features_scaled] * 15).reshape(1, 15, -1)
