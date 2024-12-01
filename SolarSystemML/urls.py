@@ -11,4 +11,5 @@ urlpatterns = [
     path('log/', views.maintenance_log, name='maintenance_log'),
     path('acknowledge_warning/', views.acknowledge_warning, name='acknowledge_warning'),
     path('get_panel_data/', views.get_panel_data, name='get_panel_data'),
+    path('readme/', views.view_readme, name='view_readme'),
 ]

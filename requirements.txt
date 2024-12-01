@@ -1,0 +1,6 @@
+# Core requirements for SolarSystemML
+Django
+tensorflow
+pandas
+numpy
+scikit-learn

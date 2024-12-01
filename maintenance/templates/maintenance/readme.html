@@ -1,0 +1,26 @@
+{% extends 'maintenance/base.html' %}
+{% load static %}
+
+{% block title %}README - SolarGuard Documentation{% endblock %}
+
+{% block content %}
+<!-- Banner Section -->
+<div class="row">
+    <div class="col-md-12" style="background: url('{% static "images/solarguy.jpg" %}') no-repeat center center; background-size: cover; padding: 100px 0;">
+        <div class="text-center text-white" style="background-color: rgba(0, 0, 0, 0.5); padding: 20px;">
+            <h1 class="display-3">SolarGuard Documentation</h1>
+        </div>
+    </div>
+</div>
+
+<!-- README Content Section -->
+<div class="container mt-5">
+    <div class="card">
+        <div class="card-body">
+            <div class="markdown-content">
+                {{ readme_html|safe }}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

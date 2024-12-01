@@ -12,6 +12,7 @@ This file defines the backend logic for the SolarGuard project:
 """
 
 from django.shortcuts import render
+from django.http import HttpResponse
 from django.http import JsonResponse
 import threading
 import logging
@@ -23,6 +24,7 @@ from sklearn.preprocessing import MinMaxScaler
 import numpy as np
 from django.views.decorators.csrf import csrf_exempt
 import json
+import markdown
 
 # Initialize logging for debugging
 logging.basicConfig(level=logging.DEBUG)
@@ -291,3 +293,26 @@ def get_panel_data(request):
             logging.error(f"Error fetching panel data: {e}")
             return JsonResponse({'success': False, 'error': str(e)})
     return JsonResponse({'success': False, 'error': 'Invalid request method'})
+
+
+README_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'README.md')
+
+def view_readme(request):
+    """
+    Render the README.md file as HTML in the browser with Bootstrap styling.
+    """
+    try:
+        # Open and read the contents of the README.md file
+        with open(README_PATH, 'r', encoding='utf-8') as readme_file:
+            readme_content = readme_file.read()
+
+        # Convert markdown to HTML
+        html_content = markdown.markdown(readme_content)
+
+        # Pass the HTML content to the template for rendering
+        return render(request, 'maintenance/readme.html', {'readme_html': html_content})
+
+    except FileNotFoundError:
+        return HttpResponse("README.md file not found.", status=404)
+    except Exception as e:
+        return HttpResponse(f"An error occurred: {e}", status=500)
